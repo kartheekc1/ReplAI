@@ -1,0 +1,173 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --accent: #5b5ff8;
+  --accent-2: #7c3aed;
+  --accent-3: #00c2a8;
+  --accent-soft: rgba(91, 95, 248, 0.1);
+  --accent-glow: rgba(91, 95, 248, 0.22);
+  --grad: linear-gradient(135deg, #5b5ff8 0%, #7c3aed 50%, #00c2a8 100%);
+  --nav-h: 70px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #ffffff;
+  color: #111827;
+  font-feature-settings: "rlig" 1, "calt" 1;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  letter-spacing: -0.01em;
+}
+
+/* Ambient background field for landing */
+.bg-field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.bg-field::before,
+.bg-field::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(130px);
+  opacity: 0.4;
+}
+.bg-field::before {
+  width: 680px;
+  height: 680px;
+  top: -280px;
+  left: 50%;
+  transform: translateX(-58%);
+  background: radial-gradient(circle, var(--accent-glow), transparent 68%);
+}
+.bg-field::after {
+  width: 540px;
+  height: 540px;
+  top: 180px;
+  right: -180px;
+  background: radial-gradient(circle, rgba(0, 194, 168, 0.16), transparent 68%);
+}
+
+.bg-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(17, 24, 39, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(17, 24, 39, 0.035) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 0%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 0%, transparent 75%);
+}
+
+@layer components {
+  .container-wide {
+    @apply mx-auto w-full max-w-[1180px] px-7;
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full border border-brand/20 bg-brand/10 px-3 py-1.5 text-[12.5px] font-semibold uppercase tracking-[0.04em] text-brand;
+  }
+  .eyebrow .dot {
+    @apply h-1.5 w-1.5 rounded-full bg-brand;
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  .display {
+    @apply font-display font-bold leading-[1.06] tracking-[-0.025em];
+  }
+  .display em {
+    @apply not-italic;
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .grad-text {
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .lead {
+    @apply text-[18px] font-medium leading-[1.6] text-muted;
+  }
+
+  .btn-primary-grad {
+    background: var(--grad);
+    background-size: 140% 140%;
+    box-shadow:
+      0 8px 24px -8px var(--accent-glow),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    transition:
+      transform 0.18s ease,
+      box-shadow 0.25s ease;
+  }
+  .btn-primary-grad:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      0 14px 34px -10px var(--accent-glow),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+
+  .card-rv {
+    @apply rounded-lg border border-line bg-surface shadow-sm transition-all;
+  }
+  .card-rv-hover:hover {
+    @apply -translate-y-[3px] border-line-2 shadow-md;
+  }
+
+  .chip-mono {
+    @apply rounded-md border px-2 py-0.5 font-mono text-[12.5px] font-medium;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-color: color-mix(in srgb, var(--accent) 24%, transparent);
+  }
+
+  .live-dot {
+    @apply h-[7px] w-[7px] rounded-full bg-success;
+    box-shadow: 0 0 8px #22c55e;
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+
+  .section {
+    @apply relative z-[1] py-24;
+  }
+  .section-head {
+    @apply mx-auto mb-14 max-w-[660px] text-center;
+  }
+  .section-head h2 {
+    @apply mb-3 mt-4;
+    font-size: clamp(31px, 4.2vw, 48px);
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+}
+::-webkit-scrollbar-thumb {
+  background: #cdd3de;
+  border-radius: 8px;
+  border: 3px solid #fff;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}

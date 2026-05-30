@@ -1,0 +1,27 @@
+# Minimal Supabase project config (used by the `supabase` CLI).
+# Run `supabase init` to scaffold the rest.
+
+project_id = "replyverse"
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[studio]
+port = 54323
+
+[auth]
+enable_signup = true
+enable_confirmations = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000/auth/callback"]
+
+[auth.external.google]
+enabled = true
+client_id = "env(GOOGLE_CLIENT_ID)"
+secret = "env(GOOGLE_CLIENT_SECRET)"
+redirect_uri = "https://YOUR_PROJECT.supabase.co/auth/v1/callback"
+
+[storage]
+file_size_limit = "10MiB"

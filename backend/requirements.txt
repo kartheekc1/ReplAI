@@ -1,0 +1,14 @@
+# Loose pins — let pip pick the latest version that has a wheel for the installed Python.
+# Pydantic 2.12+, FastAPI 0.115+ ship cp314 wheels for pydantic-core / typing-extensions.
+
+fastapi>=0.115,<1
+uvicorn[standard]>=0.34,<1
+pydantic>=2.12
+pydantic-settings>=2.7
+python-dotenv>=1.0
+supabase>=2.10,<3
+razorpay>=1.4
+python-jose[cryptography]>=3.5
+slowapi>=0.1.9
+python-multipart>=0.0.20
+itsdangerous>=2.2
