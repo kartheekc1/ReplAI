@@ -124,6 +124,38 @@ if (-not (Test-Path $nextBin)) {
   exit 1
 }
 
+# 3b. Refuse to launch with placeholder secrets - saves hours of debugging
+Write-Host "-> Validating backend\.env" -ForegroundColor Green
+$envText = Get-Content "$backend\.env" -Raw
+$bad = @()
+if ($envText -match "SUPABASE_JWT_SECRET=PASTE_JWT_SECRET_HERE")            { $bad += "SUPABASE_JWT_SECRET" }
+if ($envText -match "SUPABASE_SERVICE_ROLE_KEY=PASTE_SERVICE_ROLE_KEY_HERE") { $bad += "SUPABASE_SERVICE_ROLE_KEY" }
+
+if ($bad.Count -gt 0) {
+  Write-Host ""
+  Write-Host "[x] These secrets in backend\.env are still placeholders:" -ForegroundColor Red
+  $bad | ForEach-Object { Write-Host "      - $_" -ForegroundColor Yellow }
+  Write-Host ""
+  Write-Host "    The backend would start but EVERY authenticated request returns 401," -ForegroundColor Yellow
+  Write-Host "    which is why Razorpay does not work." -ForegroundColor Yellow
+  Write-Host ""
+  Write-Host "    Fix it in 3 steps:" -ForegroundColor Cyan
+  Write-Host "    1. Open the Supabase API settings page (link opens in your browser)" -ForegroundColor Cyan
+  Write-Host "    2. Copy service_role key (under Project API keys, click Reveal)" -ForegroundColor Cyan
+  Write-Host "       Copy JWT Secret (scroll down to JWT Settings)" -ForegroundColor Cyan
+  Write-Host "    3. Paste both into backend\.env replacing the PASTE placeholders" -ForegroundColor Cyan
+  Write-Host ""
+  $open = Read-Host "Open the Supabase dashboard + backend\.env now in Notepad? (Y/n)"
+  if ($open -ne "n" -and $open -ne "N") {
+    Start-Process "https://supabase.com/dashboard/project/sbmeckxvilnuawkhuumk/settings/api"
+    Start-Process "notepad.exe" "$backend\.env"
+  }
+  Write-Host ""
+  Write-Host "After saving, re-run:  .\start.ps1" -ForegroundColor Green
+  exit 1
+}
+Write-Host "   OK - Supabase secrets look filled" -ForegroundColor DarkGray
+
 # 4. Launch both services
 Write-Host ""
 Write-Host "-> Launching services in two new windows..." -ForegroundColor Green

@@ -1,5 +1,5 @@
 import { DollarSign, Heart, MessageCircle, Send, Target } from "lucide-react";
-import { AreaChart, Donut } from "@/components/shared/charts";
+import { AreaChart, Donut } from "@/components/shared/charts-lazy";
 
 const CARDS = [
   { l: "Total comments", v: "48,210", icon: MessageCircle },

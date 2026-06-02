@@ -6,7 +6,7 @@ import { Bolt, DollarSign, MessageCircle, Send, Sparkles, Target } from "lucide-
 import { StatCard } from "@/components/dashboard/stat-card";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AreaChart } from "@/components/shared/charts";
+import { AreaChart } from "@/components/shared/charts-lazy";
 import { EmptyState } from "@/components/dashboard/empty-state";
 import { Button } from "@/components/ui/button";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";

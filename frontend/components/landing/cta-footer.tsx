@@ -74,10 +74,9 @@ const FOOTER_COLS = [
   {
     title: "Legal",
     links: [
-      ["Privacy policy", "#"],
-      ["Terms of service", "#"],
-      ["Cookies", "#"],
-      ["DPA", "#"],
+      ["Privacy policy", "/privacy"],
+      ["Terms & conditions", "/terms"],
+      ["Contact", "mailto:support@getreplai.in"],
     ],
   },
 ];

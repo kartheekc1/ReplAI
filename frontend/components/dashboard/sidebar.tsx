@@ -15,8 +15,9 @@ import {
 } from "lucide-react";
 import { Logo } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { useUsage } from "@/hooks/use-usage";
 
 const NAV = [
   { id: "/dashboard", label: "Overview", icon: Grid3x3 },
@@ -32,6 +33,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createSupabaseBrowserClient();
+  const usage = useUsage();
 
   async function signOut() {
     await supabase.auth.signOut();
@@ -68,19 +70,44 @@ export function Sidebar() {
         })}
       </nav>
       <div className="card-rv mb-2.5 bg-surface-2 p-3.5">
-        <div className="mb-2 flex justify-between text-[12px]">
+        <div className="mb-2 flex items-center justify-between text-[12px]">
           <span className="text-muted">DMs this month</span>
-          <span className="font-semibold">740 / 1k</span>
+          {usage.loading ? (
+            <span className="h-3 w-12 animate-pulse rounded bg-surface-3" />
+          ) : usage.unlimited ? (
+            <span className="font-semibold text-success">{formatNumber(usage.sent)} / ∞</span>
+          ) : (
+            <span className={cn("font-semibold", usage.percent >= 90 && "text-danger")}>
+              {formatNumber(usage.sent)} / {formatNumber(usage.limit!)}
+            </span>
+          )}
         </div>
         <div className="h-1.5 overflow-hidden rounded-full bg-surface-3">
-          <div className="h-full w-[74%] bg-brand-gradient" />
+          <div
+            className={cn(
+              "h-full transition-all",
+              usage.unlimited
+                ? "w-full bg-success/60"
+                : usage.percent >= 90
+                  ? "bg-danger"
+                  : "bg-brand-gradient"
+            )}
+            style={!usage.unlimited ? { width: `${Math.max(usage.percent, 2)}%` } : undefined}
+          />
         </div>
-        <Link
-          href="/dashboard/billing"
-          className="mt-2.5 inline-block text-[12.5px] font-semibold text-brand"
-        >
-          Upgrade plan →
-        </Link>
+        <div className="mt-2 flex items-center justify-between">
+          <span className="text-[11px] uppercase tracking-wider text-subtle">
+            Plan · {usage.plan}
+          </span>
+          {!usage.unlimited && (
+            <Link
+              href="/dashboard/billing"
+              className="text-[12px] font-semibold text-brand hover:underline"
+            >
+              Upgrade →
+            </Link>
+          )}
+        </div>
       </div>
       <button
         onClick={signOut}

@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { EmptyState } from "@/components/dashboard/empty-state";
-import { AreaChart, BarChart, Donut } from "@/components/shared/charts";
+import { AreaChart, BarChart, Donut } from "@/components/shared/charts-lazy";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 type Stats = { comments: number; dms: number; leads: number; revenue: number };

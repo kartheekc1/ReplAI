@@ -8,6 +8,17 @@ const nextConfig = {
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
     ],
   },
+  // Proxy /backend/* to the FastAPI server so the frontend can speak to it without
+  // hitting browser mixed-content blocks (frontend HTTPS, backend HTTP).
+  async rewrites() {
+    const backend = process.env.BACKEND_INTERNAL_URL || "http://localhost:8000";
+    return [
+      {
+        source: "/backend/:path*",
+        destination: `${backend}/:path*`,
+      },
+    ];
+  },
   async headers() {
     return [
       {
