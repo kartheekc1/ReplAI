@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Bell, ChevronDown, Search } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { Logo } from "@/components/shared/logo";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { MobileNav } from "./mobile-nav";
 
 const TITLES: Record<string, string> = {
   "/dashboard": "Overview",
@@ -45,10 +46,15 @@ export function Topbar() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-3 border-b border-line bg-white/85 px-4 backdrop-blur-xl sm:px-7">
-      <div className="flex items-center gap-3 min-w-0">
-        <MobileNav />
-        <h1 className="truncate text-base font-semibold sm:text-[19px]">{deriveTitle(pathname)}</h1>
+    <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-3 border-b border-line bg-white px-4 sm:px-7">
+      <div className="flex min-w-0 items-center gap-3">
+        {/* Brand on mobile (since sidebar is hidden) */}
+        <Link href="/" className="md:hidden">
+          <Logo size={24} showText={false} />
+        </Link>
+        <h1 className="truncate text-base font-semibold sm:text-[19px]">
+          {deriveTitle(pathname)}
+        </h1>
       </div>
       <div className="flex items-center gap-2 sm:gap-3.5">
         <div className="hidden items-center gap-2 rounded-md border border-line bg-surface-2 px-3 py-2 lg:flex lg:w-[220px]">
@@ -63,7 +69,7 @@ export function Topbar() {
           className="relative grid h-10 w-10 place-items-center rounded-md border border-line bg-surface-2 text-muted"
         >
           <Bell size={17} />
-          <span className="absolute right-2.5 top-2.5 h-1.5 w-1.5 rounded-full bg-brand ring-2 ring-section-bg" />
+          <span className="absolute right-2.5 top-2.5 h-1.5 w-1.5 rounded-full bg-brand ring-2 ring-white" />
         </button>
         <div className="flex cursor-pointer items-center gap-2 rounded-full border border-line bg-surface-2 py-1.5 pl-1.5 pr-1 sm:pr-2.5">
           <span className="grid h-7 w-7 place-items-center rounded-full bg-brand-gradient text-[12px] font-bold text-white">

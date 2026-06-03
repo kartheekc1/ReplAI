@@ -10,53 +10,58 @@ import {
   Grid3x3,
   Instagram,
   LogOut,
-  Menu,
-  Plus,
+  MoreHorizontal,
   Settings,
   Users,
   X,
 } from "lucide-react";
 import { Logo } from "@/components/shared/logo";
-import { Button } from "@/components/ui/button";
 import { cn, formatNumber } from "@/lib/utils";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useUsage } from "@/hooks/use-usage";
 
-const NAV = [
-  { id: "/dashboard", label: "Overview", icon: Grid3x3 },
-  { id: "/dashboard/automations", label: "Automations", icon: Bolt },
-  { id: "/dashboard/accounts", label: "Accounts", icon: Instagram },
+/**
+ * Mobile-only navigation system:
+ *  - Bottom tab bar (fixed) with the 5 most-used sections + a "More" button
+ *  - "More" opens an overflow drawer with Analytics, Billing, Settings, Sign out
+ *
+ * Hidden entirely above the `md` breakpoint — the desktop sidebar takes over.
+ */
+
+const PRIMARY_TABS = [
+  { id: "/dashboard", label: "Home", icon: Grid3x3 },
+  { id: "/dashboard/automations", label: "Flows", icon: Bolt },
+  { id: "/dashboard/accounts", label: "IG", icon: Instagram },
   { id: "/dashboard/leads", label: "Leads", icon: Users },
+];
+
+const MORE_LINKS = [
   { id: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
   { id: "/dashboard/billing", label: "Billing", icon: CreditCard },
   { id: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
 
-/**
- * Hamburger button + slide-in drawer that mirrors the desktop sidebar.
- * Shown only below md (≤767px). The desktop sidebar handles ≥md.
- */
 export function MobileNav() {
-  const [open, setOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const usage = useUsage();
 
-  // Auto-close drawer whenever the route changes
+  const isMoreActive = MORE_LINKS.some((l) => pathname.startsWith(l.id));
+
   useEffect(() => {
-    setOpen(false);
+    setDrawerOpen(false);
   }, [pathname]);
 
-  // Lock body scroll while drawer is open
   useEffect(() => {
-    if (open) {
+    if (drawerOpen) {
       const prev = document.body.style.overflow;
       document.body.style.overflow = "hidden";
       return () => {
         document.body.style.overflow = prev;
       };
     }
-  }, [open]);
+  }, [drawerOpen]);
 
   async function signOut() {
     const sb = createSupabaseBrowserClient();
@@ -66,72 +71,75 @@ export function MobileNav() {
 
   return (
     <>
-      {/* Hamburger trigger — only visible below md */}
-      <button
-        onClick={() => setOpen(true)}
-        aria-label="Open menu"
-        className="grid h-10 w-10 shrink-0 place-items-center rounded-md border border-line bg-surface text-ink shadow-sm transition-colors hover:bg-surface-2 md:hidden"
+      {/* Bottom tab bar - always visible on mobile */}
+      <nav
+        className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-line bg-white shadow-[0_-4px_16px_-8px_rgba(17,24,39,0.12)] md:hidden"
+        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
-        <Menu size={20} strokeWidth={2.2} />
-      </button>
+        {PRIMARY_TABS.map(({ id, label, icon: Icon }) => {
+          const active = id === "/dashboard" ? pathname === id : pathname.startsWith(id);
+          return (
+            <Link
+              key={id}
+              href={id}
+              className={cn(
+                "relative flex flex-col items-center justify-center gap-1 py-2.5 text-[11px] font-medium",
+                active ? "text-brand" : "text-muted"
+              )}
+            >
+              {active && (
+                <span className="absolute top-0 left-1/2 h-[3px] w-10 -translate-x-1/2 rounded-b bg-brand-gradient" />
+              )}
+              <Icon size={22} strokeWidth={active ? 2.2 : 1.8} />
+              <span>{label}</span>
+            </Link>
+          );
+        })}
+        <button
+          onClick={() => setDrawerOpen(true)}
+          aria-label="More menu"
+          className={cn(
+            "relative flex flex-col items-center justify-center gap-1 py-2.5 text-[11px] font-medium",
+            isMoreActive || drawerOpen ? "text-brand" : "text-muted"
+          )}
+        >
+          {isMoreActive && (
+            <span className="absolute top-0 left-1/2 h-[3px] w-10 -translate-x-1/2 rounded-b bg-brand-gradient" />
+          )}
+          <MoreHorizontal size={22} strokeWidth={isMoreActive ? 2.2 : 1.8} />
+          <span>More</span>
+        </button>
+      </nav>
 
-      {/* Backdrop */}
+      {/* More drawer - slides up from bottom */}
       <div
-        onClick={() => setOpen(false)}
+        onClick={() => setDrawerOpen(false)}
         className={cn(
-          "fixed inset-0 z-40 bg-ink/40 backdrop-blur-sm transition-opacity md:hidden",
-          open ? "opacity-100" : "pointer-events-none opacity-0"
+          "fixed inset-0 z-40 bg-ink/50 transition-opacity md:hidden",
+          drawerOpen ? "opacity-100" : "pointer-events-none opacity-0"
         )}
       />
-
-      {/* Drawer */}
-      <aside
+      <div
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-[280px] max-w-[80vw] flex-col border-r border-line bg-section-bg px-4 py-5 shadow-lg transition-transform md:hidden",
-          open ? "translate-x-0" : "-translate-x-full"
+          "fixed inset-x-0 bottom-0 z-50 max-h-[85vh] rounded-t-2xl border-t border-line bg-white p-5 shadow-2xl transition-transform md:hidden",
+          drawerOpen ? "translate-y-0" : "translate-y-full"
         )}
+        style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 20px)" }}
       >
-        <div className="mb-4 flex items-center justify-between px-2">
-          <Link href="/" onClick={() => setOpen(false)}>
-            <Logo size={24} />
-          </Link>
+        <div className="mb-4 flex items-center justify-between">
+          <Logo size={22} />
           <button
-            onClick={() => setOpen(false)}
+            onClick={() => setDrawerOpen(false)}
             aria-label="Close menu"
-            className="grid h-9 w-9 place-items-center rounded-md hover:bg-surface-2"
+            className="grid h-9 w-9 place-items-center rounded-md text-muted hover:bg-surface-2"
           >
             <X size={18} />
           </button>
         </div>
 
-        <Button variant="primary" className="mb-4" asChild>
-          <Link href="/dashboard/automations">
-            <Plus size={16} /> New automation
-          </Link>
-        </Button>
-
-        <nav className="flex flex-1 flex-col gap-1 overflow-y-auto">
-          {NAV.map(({ id, label, icon: Icon }) => {
-            const on = pathname === id || (id !== "/dashboard" && pathname.startsWith(id));
-            return (
-              <Link
-                key={id}
-                href={id}
-                className={cn(
-                  "flex items-center gap-3 rounded-md border-l-2 px-3 py-3 text-sm font-medium",
-                  on
-                    ? "border-brand bg-brand/10 text-brand"
-                    : "border-transparent text-muted hover:bg-surface-2 hover:text-ink"
-                )}
-              >
-                <Icon size={18} className={on ? "text-brand" : "text-subtle"} /> {label}
-              </Link>
-            );
-          })}
-        </nav>
-
-        <div className="card-rv mb-2.5 bg-surface-2 p-3.5">
-          <div className="mb-2 flex items-center justify-between text-[12px]">
+        {/* DM usage card */}
+        <div className="mb-4 rounded-xl border border-line bg-section-bg p-4">
+          <div className="mb-2 flex items-center justify-between text-[13px]">
             <span className="text-muted">DMs this month</span>
             {usage.loading ? (
               <span className="h-3 w-12 animate-pulse rounded bg-surface-3" />
@@ -143,7 +151,7 @@ export function MobileNav() {
               </span>
             )}
           </div>
-          <div className="h-1.5 overflow-hidden rounded-full bg-surface-3">
+          <div className="h-2 overflow-hidden rounded-full bg-surface-3">
             <div
               className={cn(
                 "h-full transition-all",
@@ -156,15 +164,40 @@ export function MobileNav() {
               style={!usage.unlimited ? { width: `${Math.max(usage.percent, 2)}%` } : undefined}
             />
           </div>
+          <div className="mt-2 text-[11.5px] uppercase tracking-wider text-subtle">
+            Plan · {usage.plan}
+          </div>
+        </div>
+
+        {/* More nav items */}
+        <div className="grid grid-cols-3 gap-2">
+          {MORE_LINKS.map(({ id, label, icon: Icon }) => {
+            const active = pathname.startsWith(id);
+            return (
+              <Link
+                key={id}
+                href={id}
+                className={cn(
+                  "flex flex-col items-center justify-center gap-2 rounded-xl border p-4 text-[13px] font-medium",
+                  active
+                    ? "border-brand/40 bg-brand/10 text-brand"
+                    : "border-line bg-section-bg text-ink"
+                )}
+              >
+                <Icon size={22} />
+                {label}
+              </Link>
+            );
+          })}
         </div>
 
         <button
           onClick={signOut}
-          className="flex items-center gap-2.5 rounded-md px-3 py-3 text-sm text-subtle hover:bg-surface-2 hover:text-ink"
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-line bg-section-bg p-4 text-[14px] font-semibold text-danger"
         >
           <LogOut size={17} /> Sign out
         </button>
-      </aside>
+      </div>
     </>
   );
 }

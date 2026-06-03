@@ -29,9 +29,7 @@ export function Nav() {
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 flex h-[var(--nav-h)] items-center transition-all",
-        scrolled
-          ? "border-b border-line bg-white/80 backdrop-blur-xl"
-          : "bg-transparent"
+        scrolled ? "border-b border-line bg-white" : "bg-white/95"
       )}
     >
       <div className="container-wide flex items-center justify-between">
