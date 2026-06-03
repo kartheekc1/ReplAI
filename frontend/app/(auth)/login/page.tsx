@@ -40,8 +40,8 @@ export default function LoginPage() {
 
   return (
     <div className="w-full max-w-md">
-      <div className="card-rv p-8">
-        <h1 className="display mb-2 text-[28px]">Welcome back</h1>
+      <div className="card-rv p-5 sm:p-8">
+        <h1 className="display mb-2 text-[24px] sm:text-[28px]">Welcome back</h1>
         <p className="mb-7 text-sm text-muted">
           Sign in to continue automating your DMs.
         </p>

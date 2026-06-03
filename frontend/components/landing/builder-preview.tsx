@@ -67,7 +67,7 @@ export function BuilderPreview() {
               ))}
             </ul>
           </div>
-          <div className="card-rv flex flex-col items-center bg-section-bg p-7">
+          <div className="card-rv flex flex-col items-center bg-section-bg p-4 sm:p-7">
             <div className="mb-5 flex w-full items-center justify-between">
               <span className="text-[13.5px] font-semibold text-muted">
                 Flow · &ldquo;Link in comments&rdquo;

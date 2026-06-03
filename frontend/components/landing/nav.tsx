@@ -49,12 +49,18 @@ export function Nav() {
             </a>
           ))}
         </nav>
-        <div className="flex items-center gap-3">
-          <Link href="/login" className="hidden text-[14px] font-semibold text-muted hover:text-ink md:inline">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Link
+            href="/login"
+            className="hidden text-[14px] font-semibold text-muted hover:text-ink md:inline"
+          >
             Sign in
           </Link>
-          <Button variant="primary" asChild>
+          <Button variant="primary" size="sm" className="hidden sm:inline-flex" asChild>
             <Link href="/register">Start free trial</Link>
+          </Button>
+          <Button variant="primary" size="sm" className="sm:hidden" asChild>
+            <Link href="/register">Start</Link>
           </Button>
           <button
             onClick={() => setOpen((o) => !o)}

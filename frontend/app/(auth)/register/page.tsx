@@ -44,10 +44,10 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="grid w-full max-w-[920px] gap-10 lg:grid-cols-[1fr_1fr] lg:items-center">
-      <div>
+    <div className="grid w-full max-w-[920px] gap-8 lg:grid-cols-[1fr_1fr] lg:items-center lg:gap-10">
+      <div className="text-center lg:text-left">
         <span className="eyebrow"><span className="dot" /> Free 14-day trial</span>
-        <h1 className="display mt-5 text-[40px]">
+        <h1 className="display mt-5 text-[28px] sm:text-[36px] lg:text-[40px]">
           Start automating in <em>under 5 minutes</em>
         </h1>
         <p className="lead mt-4 max-w-[420px]">
@@ -69,7 +69,7 @@ export default function RegisterPage() {
         </ul>
       </div>
 
-      <div className="card-rv p-8">
+      <div className="card-rv p-5 sm:p-8">
         <Button onClick={onGoogle} variant="ghost" className="w-full" size="lg">
           <GoogleIcon /> Continue with Google
         </Button>

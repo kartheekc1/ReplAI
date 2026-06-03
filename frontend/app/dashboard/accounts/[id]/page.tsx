@@ -63,7 +63,10 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
         .select("post_id")
         .eq("account_id", id)
         .eq("status", "active");
-      setActivePostIds(new Set((autos ?? []).map((a) => a.post_id).filter(Boolean) as string[]));
+      const ids = ((autos ?? []) as Array<{ post_id: string | null }>)
+        .map((a) => a.post_id)
+        .filter((p): p is string => Boolean(p));
+      setActivePostIds(new Set(ids));
 
       // Fetch real Instagram media via FastAPI -> Graph API
       try {

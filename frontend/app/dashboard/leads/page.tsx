@@ -81,23 +81,28 @@ export default function LeadsPage() {
 
   return (
     <div className="animate-screenIn">
-      <div className="mb-4 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
+      <div className="mb-4 flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
         <div className="flex w-full max-w-md items-center gap-2 rounded-md border border-line bg-surface px-3 py-2">
-          <Search size={16} className="text-subtle" />
+          <Search size={16} className="text-subtle shrink-0" />
           <input
-            placeholder="Search leads by name, username, email, keyword…"
+            placeholder="Search leads…"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             className="w-full bg-transparent text-sm outline-none placeholder:text-subtle"
           />
         </div>
         <div className="flex gap-2">
-          <Button variant="ghost"><Filter size={15} /> Filter</Button>
-          <Button variant="ghost" onClick={exportCsv}><Download size={15} /> Export CSV</Button>
+          <Button variant="ghost" className="flex-1 sm:flex-none">
+            <Filter size={15} /> Filter
+          </Button>
+          <Button variant="ghost" onClick={exportCsv} className="flex-1 sm:flex-none">
+            <Download size={15} /> Export
+          </Button>
         </div>
       </div>
 
-      <div className="card-rv overflow-hidden">
+      {/* Desktop / tablet: real table */}
+      <div className="card-rv hidden overflow-hidden md:block">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
@@ -144,6 +149,56 @@ export default function LeadsPage() {
         {filtered.length === 0 && (
           <div className="p-12 text-center text-sm text-muted">No leads match your search.</div>
         )}
+      </div>
+
+      {/* Mobile: stacked cards */}
+      <div className="flex flex-col gap-3 md:hidden">
+        {filtered.length === 0 && (
+          <div className="card-rv p-8 text-center text-sm text-muted">
+            No leads match your search.
+          </div>
+        )}
+        {filtered.map((l) => (
+          <div key={l.id} className="card-rv space-y-3 p-4">
+            <div className="flex items-center gap-3">
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-gradient text-[12px] font-bold text-white">
+                {(l.name ?? l.username).slice(0, 2).toUpperCase()}
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="truncate font-semibold">{l.name ?? `@${l.username}`}</div>
+                <div className="truncate text-[12px] text-muted">@{l.username}</div>
+              </div>
+              {l.keyword && <span className="chip-mono shrink-0">{l.keyword}</span>}
+            </div>
+            <div className="grid grid-cols-1 gap-1.5 text-[13px]">
+              {l.email && (
+                <div className="flex justify-between gap-2">
+                  <span className="text-subtle">Email</span>
+                  <span className="truncate">{l.email}</span>
+                </div>
+              )}
+              {l.phone && (
+                <div className="flex justify-between gap-2">
+                  <span className="text-subtle">Phone</span>
+                  <span>{l.phone}</span>
+                </div>
+              )}
+              <div className="flex justify-between gap-2">
+                <span className="text-subtle">Date</span>
+                <span className="text-muted">{new Date(l.created_at).toLocaleDateString()}</span>
+              </div>
+            </div>
+            {l.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 border-t border-line pt-3">
+                {l.tags.map((t) => (
+                  <Badge key={t} tone="brand">
+                    <Tag size={10} /> {t}
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );

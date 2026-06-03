@@ -7,10 +7,10 @@ export function FinalCTA() {
   return (
     <section className="section">
       <div className="container-wide">
-        <div className="card-rv relative overflow-hidden bg-gradient-to-br from-brand to-secondary p-12 text-center text-white">
+        <div className="card-rv relative overflow-hidden bg-gradient-to-br from-brand to-secondary p-6 text-center text-white sm:p-10 lg:p-12">
           <div className="absolute inset-0 opacity-30" style={{ background: "var(--grad)" }} />
           <div className="relative">
-            <h2 className="display mb-4 text-white" style={{ fontSize: "clamp(34px, 4vw, 52px)" }}>
+            <h2 className="display mb-4 text-white" style={{ fontSize: "clamp(26px, 4vw, 52px)" }}>
               Ready to automate your <br className="hidden md:block" />
               Instagram growth?
             </h2>
@@ -85,7 +85,7 @@ export function Footer() {
   return (
     <footer className="border-t border-line bg-section-bg pb-10 pt-16">
       <div className="container-wide">
-        <div className="grid gap-10 lg:grid-cols-[1.4fr_repeat(4,1fr)]">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_repeat(4,1fr)]">
           <div>
             <Logo />
             <p className="mt-4 max-w-[280px] text-[13.5px] text-muted">

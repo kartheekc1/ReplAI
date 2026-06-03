@@ -141,7 +141,7 @@ function HeroMockup() {
 
 export function Hero() {
   return (
-    <section className="pt-[calc(var(--nav-h)+70px)] pb-20">
+    <section className="pt-[calc(var(--nav-h)+32px)] pb-12 sm:pt-[calc(var(--nav-h)+70px)] sm:pb-20">
       <div className="container-wide grid items-center gap-14 lg:grid-cols-[1.02fr_0.98fr]">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -153,7 +153,7 @@ export function Hero() {
           </span>
           <h1
             className="display mb-5 mt-5"
-            style={{ fontSize: "clamp(40px, 5vw, 66px)" }}
+            style={{ fontSize: "clamp(32px, 5vw, 66px)" }}
           >
             Turn Instagram comments into customers <em>automatically</em>
           </h1>
