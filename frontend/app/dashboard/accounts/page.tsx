@@ -38,14 +38,14 @@ export default function AccountsPage() {
 
   return (
     <div className="animate-screenIn">
-      <div className="mb-5 flex items-center justify-between">
-        <div>
+      <div className="mb-5 flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
+        <div className="min-w-0">
           <h2 className="text-[19px] font-semibold">Connected accounts</h2>
           <p className="mt-1 text-sm text-muted">
             Manage every Instagram account and automate at the post level.
           </p>
         </div>
-        <Button variant="primary" onClick={() => setOpen(true)}>
+        <Button variant="primary" onClick={() => setOpen(true)} className="shrink-0 sm:w-auto">
           <Plus size={16} /> Connect account
         </Button>
       </div>

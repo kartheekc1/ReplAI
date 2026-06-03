@@ -89,14 +89,14 @@ export default function OverviewPage() {
           title="No activity yet"
           body="Connect an Instagram account and create your first automation — this dashboard will fill up with comments, DMs, and leads in real time."
           action={
-            <div className="flex gap-2">
+            <>
               <Button variant="primary" asChild>
                 <Link href="/dashboard/accounts">Connect Instagram</Link>
               </Button>
               <Button variant="ghost" asChild>
                 <Link href="/dashboard/automations">View automations</Link>
               </Button>
-            </div>
+            </>
           }
         />
       ) : (
