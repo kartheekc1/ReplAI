@@ -22,7 +22,7 @@ const PLANS = [
     name: "Starter",
     icon: TrendingUp,
     m: 349,
-    y: 290, // ~17% yearly discount
+    y: 314, // 10% yearly discount → 349 * 0.9
     tag: "For growing creators",
     feats: ["Unlimited DMs", "1 Instagram account", "Unlimited keywords", "Advanced analytics", "Lead collection forms"],
     cta: "Choose Starter",
@@ -32,7 +32,7 @@ const PLANS = [
     name: "Pro",
     icon: Sparkles,
     m: 499,
-    y: 415,
+    y: 449, // 10% yearly discount → 499 * 0.9
     tag: "For serious growth",
     popular: true,
     feats: ["Unlimited DMs", "Up to 4 Instagram accounts", "AI smart replies", "Story automation", "Priority support"],
@@ -43,7 +43,7 @@ const PLANS = [
     name: "Agency",
     icon: Users,
     m: 1299,
-    y: 1080,
+    y: 1169, // 10% yearly discount → 1299 * 0.9
     tag: "For teams & agencies",
     feats: ["Unlimited DMs", "10+ Instagram accounts", "Team management", "White-label reports", "Dedicated manager"],
     cta: "Choose Agency",
@@ -83,7 +83,7 @@ export function Pricing() {
                         on ? "bg-white/20 text-white" : "bg-brand/10 text-brand"
                       )}
                     >
-                      −17%
+                      −10%
                     </span>
                   )}
                 </button>

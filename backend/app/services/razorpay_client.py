@@ -24,12 +24,12 @@ PRICING_INR = {
     "agency": 129_900,     # ₹1,299
 }
 
-# Optional yearly discount tier (~17% off, billed annually)
+# Yearly discount tier — 10% off, billed annually (₹349 → ₹314/mo equivalent, etc.)
 YEARLY_INR = {
     "free":    0,
-    "starter": 348_000,    # ₹3,480 / yr  (~₹290/mo)
-    "pro":     498_000,    # ₹4,980 / yr  (~₹415/mo)
-    "agency": 1_296_000,   # ₹12,960 / yr (~₹1,080/mo)
+    "starter": 376_900,    # ₹3,769 / yr  (~₹314/mo, 349 × 12 × 0.9)
+    "pro":     538_900,    # ₹5,389 / yr  (~₹449/mo, 499 × 12 × 0.9)
+    "agency": 1_402_900,   # ₹14,029 / yr (~₹1,169/mo, 1299 × 12 × 0.9)
 }
 
 
