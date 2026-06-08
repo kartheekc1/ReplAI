@@ -1,0 +1,140 @@
+# DigitalOcean App Platform spec for ReplAI.
+# Defines both Node (frontend) and Python (backend) services from one file.
+#
+# To deploy:
+#   1. Push this file to GitHub (already on main)
+#   2. https://cloud.digitalocean.com/apps/new
+#   3. Connect kartheekc1/ReplAI repo, select branch "main"
+#   4. DigitalOcean detects this app.yaml and proposes both services
+#   5. Click "Next" through, then add the secret env values
+#
+# Docs: https://docs.digitalocean.com/products/app-platform/reference/app-spec/
+
+name: replai
+region: blr1   # Bangalore — closest to India; change to nyc/ams/fra/sfo/sgp/syd if you prefer
+
+# Frontend: Next.js 15 on Node
+services:
+  - name: web
+    github:
+      repo: kartheekc1/ReplAI
+      branch: main
+      deploy_on_push: true
+    source_dir: /frontend
+    environment_slug: node-js
+    build_command: npm install --legacy-peer-deps && npm run build
+    run_command: npm run start
+    http_port: 3000
+    instance_size_slug: basic-xxs   # $5/mo, 512MB RAM. Bump to basic-xs ($12) if memory tight.
+    instance_count: 1
+    routes:
+      - path: /
+    health_check:
+      http_path: /
+      initial_delay_seconds: 30
+      period_seconds: 30
+      timeout_seconds: 5
+      failure_threshold: 5
+    envs:
+      - key: NODE_VERSION
+        scope: BUILD_TIME
+        value: "20"
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        scope: RUN_AND_BUILD_TIME
+        value: https://sbmeckxvilnuawkhuumk.supabase.co
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+      - key: NEXT_PUBLIC_API_URL
+        scope: RUN_AND_BUILD_TIME
+        # Cross-service URL — DO injects the api service's internal address
+        value: ${api.PUBLIC_URL}
+      - key: NEXT_PUBLIC_APP_URL
+        scope: RUN_AND_BUILD_TIME
+        value: ${APP_URL}    # DO auto-provides the public URL of this app
+      - key: NEXT_PUBLIC_RAZORPAY_KEY_ID
+        scope: RUN_AND_BUILD_TIME
+        value: rzp_test_SvF2x9JrPnrjyL
+      - key: NEXT_PUBLIC_META_APP_ID
+        scope: RUN_AND_BUILD_TIME
+        value: "977244885163188"
+      - key: NEXT_PUBLIC_META_REDIRECT_URI
+        scope: RUN_AND_BUILD_TIME
+        value: ${APP_URL}/dashboard/accounts/callback
+
+  # Backend: FastAPI (Python)
+  - name: api
+    github:
+      repo: kartheekc1/ReplAI
+      branch: main
+      deploy_on_push: true
+    source_dir: /backend
+    environment_slug: python
+    build_command: pip install -r requirements.txt
+    run_command: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    http_port: 8000
+    instance_size_slug: basic-xxs
+    instance_count: 1
+    routes:
+      - path: /api    # served at https://your-app.ondigitalocean.app/api/*
+    health_check:
+      http_path: /health
+      initial_delay_seconds: 20
+      period_seconds: 30
+      timeout_seconds: 5
+      failure_threshold: 5
+    envs:
+      - key: PYTHON_VERSION
+        scope: BUILD_TIME
+        value: "3.12.7"
+      - key: ENVIRONMENT
+        scope: RUN_TIME
+        value: production
+      - key: APP_NAME
+        scope: RUN_TIME
+        value: ReplAI
+      - key: SUPABASE_URL
+        scope: RUN_TIME
+        value: https://sbmeckxvilnuawkhuumk.supabase.co
+      - key: SUPABASE_ANON_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: SUPABASE_JWT_SECRET
+        scope: RUN_TIME
+        type: SECRET
+      - key: META_APP_ID
+        scope: RUN_TIME
+        value: "977244885163188"
+      - key: META_APP_SECRET
+        scope: RUN_TIME
+        type: SECRET
+      - key: META_VERIFY_TOKEN
+        scope: RUN_TIME
+        type: SECRET
+      - key: META_REDIRECT_URI
+        scope: RUN_TIME
+        value: ${APP_URL}/dashboard/accounts/callback
+      - key: META_GRAPH_BASE
+        scope: RUN_TIME
+        value: https://graph.instagram.com
+      - key: RAZORPAY_KEY_ID
+        scope: RUN_TIME
+        value: rzp_test_SvF2x9JrPnrjyL
+      - key: RAZORPAY_KEY_SECRET
+        scope: RUN_TIME
+        type: SECRET
+      - key: FRONTEND_URL
+        scope: RUN_TIME
+        value: ${APP_URL}
+      - key: ALLOWED_ORIGINS
+        scope: RUN_TIME
+        value: ${APP_URL}
+      - key: LOG_LEVEL
+        scope: RUN_TIME
+        value: INFO
+      - key: RATE_LIMIT_DEFAULT
+        scope: RUN_TIME
+        value: 120/minute
