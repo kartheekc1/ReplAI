@@ -1,0 +1,96 @@
+# Render Blueprint — defines both ReplAI services from one file.
+# To apply: Render dashboard → New + → Blueprint → connect this repo.
+# Render will auto-create replai-web and replai-api with the config below.
+#
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  # ─── Frontend: Next.js 15 (Node) ───────────────────────────────────────────
+  - type: web
+    name: replai-web
+    runtime: node
+    region: singapore           # Closest to India; change to oregon/frankfurt/etc. if needed
+    plan: starter               # $7/mo — free plan sleeps after 15min idle
+    rootDir: frontend
+    branch: main
+    buildCommand: npm install --legacy-peer-deps && npm run build
+    startCommand: npm run start
+    autoDeploy: true
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        value: https://sbmeckxvilnuawkhuumk.supabase.co
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        sync: false             # Set in dashboard — anon key is safe but easier to rotate
+      - key: NEXT_PUBLIC_API_URL
+        # Cross-service URL — Render automatically resolves this to the api service's public URL
+        fromService:
+          type: web
+          name: replai-api
+          property: host
+      - key: NEXT_PUBLIC_APP_URL
+        sync: false
+      - key: NEXT_PUBLIC_RAZORPAY_KEY_ID
+        sync: false
+      - key: NEXT_PUBLIC_META_APP_ID
+        value: "977244885163188"
+      - key: NEXT_PUBLIC_META_REDIRECT_URI
+        sync: false
+
+  # ─── Backend: FastAPI (Python) ─────────────────────────────────────────────
+  - type: web
+    name: replai-api
+    runtime: python
+    region: singapore
+    plan: starter
+    rootDir: backend
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    autoDeploy: true
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: ENVIRONMENT
+        value: production
+      - key: APP_NAME
+        value: ReplAI
+      - key: SUPABASE_URL
+        value: https://sbmeckxvilnuawkhuumk.supabase.co
+      - key: SUPABASE_ANON_KEY
+        sync: false             # paste in dashboard
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false             # SECRET — paste in dashboard
+      - key: SUPABASE_JWT_SECRET
+        sync: false             # SECRET — paste in dashboard
+      - key: META_APP_ID
+        value: "977244885163188"
+      - key: META_APP_SECRET
+        sync: false             # SECRET
+      - key: META_VERIFY_TOKEN
+        sync: false
+      - key: META_REDIRECT_URI
+        sync: false
+      - key: META_GRAPH_BASE
+        value: https://graph.instagram.com
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false             # SECRET
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: replai-web
+          property: host
+      - key: ALLOWED_ORIGINS
+        fromService:
+          type: web
+          name: replai-web
+          property: host
+      - key: LOG_LEVEL
+        value: INFO
+      - key: RATE_LIMIT_DEFAULT
+        value: 120/minute
