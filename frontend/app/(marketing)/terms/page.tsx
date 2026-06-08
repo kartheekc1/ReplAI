@@ -2,9 +2,16 @@ import type { Metadata } from "next";
 import { LegalDoc } from "@/components/landing/legal-doc";
 
 export const metadata: Metadata = {
-  title: "Terms & Conditions — ReplAI",
+  title: "Terms & Conditions",
   description:
     "The terms and conditions that govern your use of the ReplAI Instagram automation platform.",
+  alternates: { canonical: "/terms" },
+  openGraph: {
+    title: "Terms & Conditions | ReplAI",
+    description:
+      "The terms and conditions that govern your use of the ReplAI Instagram automation platform.",
+    url: "/terms",
+  },
 };
 
 export default function TermsPage() {

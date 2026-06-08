@@ -2,9 +2,26 @@
 // Auth gating happens in middleware.ts before the request reaches this layout.
 // Mobile users see a bottom tab bar; tablet/desktop users see the left sidebar.
 
+import type { Metadata } from "next";
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { Topbar } from "@/components/dashboard/topbar";
 import { MobileNav } from "@/components/dashboard/mobile-nav";
+
+/**
+ * Block search engines from indexing any /dashboard/* route.
+ * These pages are auth-gated, user-specific, and have zero SEO value -
+ * crawlers would just hit the middleware redirect to /login and waste
+ * crawl budget. Sitemap also lists them as low priority and robots.txt
+ * disallows them, but per-page `noindex` is the strongest signal.
+ */
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: { index: false, follow: false },
+  },
+};
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (

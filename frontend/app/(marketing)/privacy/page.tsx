@@ -2,9 +2,16 @@ import type { Metadata } from "next";
 import { LegalDoc } from "@/components/landing/legal-doc";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — ReplAI",
+  title: "Privacy Policy",
   description:
     "How ReplAI collects, uses, and protects your personal information and Instagram data.",
+  alternates: { canonical: "/privacy" },
+  openGraph: {
+    title: "Privacy Policy | ReplAI",
+    description:
+      "How ReplAI collects, uses, and protects your personal information and Instagram data.",
+    url: "/privacy",
+  },
 };
 
 export default function PrivacyPage() {
