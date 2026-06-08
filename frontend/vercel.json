@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "buildCommand": "npm install --legacy-peer-deps && npm run build",
+  "installCommand": "npm install --legacy-peer-deps",
+  "regions": ["bom1"],
+  "rewrites": [
+    {
+      "source": "/backend/:path*",
+      "destination": "https://replai-fj5v.onrender.com/:path*"
+    }
+  ]
+}
