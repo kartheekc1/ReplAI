@@ -12,3 +12,4 @@ python-jose[cryptography]>=3.5
 slowapi>=0.1.9
 python-multipart>=0.0.20
 itsdangerous>=2.2
+email-validator
