@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AlertTriangle, CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,19 @@ type Phase =
   | { kind: "success"; username: string }
   | { kind: "error"; message: string };
 
+/**
+ * Outer wrapper: Suspense boundary required by Next.js 15 around any subtree
+ * that calls useSearchParams() so the rest of the page can prerender statically.
+ */
 export default function InstagramCallbackPage() {
+  return (
+    <Suspense fallback={<CallbackSkeleton />}>
+      <CallbackInner />
+    </Suspense>
+  );
+}
+
+function CallbackInner() {
   const router = useRouter();
   const params = useSearchParams();
   const [phase, setPhase] = useState<Phase>({ kind: "exchanging" });
@@ -93,6 +105,17 @@ export default function InstagramCallbackPage() {
             </div>
           </>
         )}
+      </Card>
+    </div>
+  );
+}
+
+function CallbackSkeleton() {
+  return (
+    <div className="grid min-h-[60vh] place-items-center">
+      <Card className="w-full max-w-md p-8 text-center">
+        <Loader2 size={36} className="mx-auto animate-spin text-brand" />
+        <h1 className="mt-4 text-lg font-semibold">Finishing connection…</h1>
       </Card>
     </div>
   );

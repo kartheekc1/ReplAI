@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
@@ -10,7 +10,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
+/**
+ * Next.js 15 requires `useSearchParams()` to live inside a <Suspense> boundary
+ * so the rest of the page can prerender statically while the search-param-aware
+ * subtree streams in on the client. Splitting the component is the official fix.
+ */
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<LoginFormSkeleton />}>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
   const router = useRouter();
   const search = useSearchParams();
   const supabase = createSupabaseBrowserClient();
@@ -96,6 +109,23 @@ export default function LoginPage() {
             Sign up free
           </Link>
         </p>
+      </div>
+    </div>
+  );
+}
+
+function LoginFormSkeleton() {
+  return (
+    <div className="w-full max-w-md">
+      <div className="card-rv p-5 sm:p-8">
+        <div className="mb-2 h-7 w-40 animate-pulse rounded bg-surface-2" />
+        <div className="mb-7 h-4 w-64 animate-pulse rounded bg-surface-2" />
+        <div className="mb-6 h-12 w-full animate-pulse rounded bg-surface-2" />
+        <div className="space-y-4">
+          <div className="h-11 w-full animate-pulse rounded bg-surface-2" />
+          <div className="h-11 w-full animate-pulse rounded bg-surface-2" />
+          <div className="h-12 w-full animate-pulse rounded bg-surface-2" />
+        </div>
       </div>
     </div>
   );
