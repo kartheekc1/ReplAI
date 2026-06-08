@@ -21,7 +21,7 @@
 # Browser only sees same-origin requests => no CORS, no mixed-content blocks.
 [[redirects]]
   from   = "/backend/*"
-  to     = "https://replai-fj5v.onrender.com/:splat"
+  to     = "https://replai-2.onrender.com/:splat"
   status = 200            # 200 = rewrite (proxy), 301/302 would be visible redirects
   force  = true
 

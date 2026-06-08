@@ -7,7 +7,7 @@
   "rewrites": [
     {
       "source": "/backend/:path*",
-      "destination": "https://replai-fj5v.onrender.com/:path*"
+      "destination": "https://replai-2.onrender.com/:path*"
     }
   ]
 }
