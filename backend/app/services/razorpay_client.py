@@ -5,11 +5,15 @@ Pricing is in **Indian Rupees** (INR), amounts stored in paise.
 
 from __future__ import annotations
 
+import secrets
 from typing import Any
 
 import razorpay
 
 from app.config import get_settings
+
+# Razorpay rejects orders below 100 paise (₹1.00).
+MIN_AMOUNT_PAISE = 100
 
 settings = get_settings()
 _client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)) \
@@ -34,7 +38,13 @@ YEARLY_INR = {
 
 
 def create_order(plan: str, currency: str = "INR", billing: str = "monthly") -> dict[str, Any]:
-    """Create a Razorpay order for a one-time / monthly plan upgrade."""
+    """Create a Razorpay order for a one-time / monthly plan upgrade.
+
+    Raises:
+        RuntimeError: Razorpay credentials are missing → API surfaces as HTTP 503
+        ValueError:   Bad plan, free plan, or amount below Razorpay's 100-paise floor → HTTP 400
+        razorpay.errors.*: Razorpay API rejected the call → caller surfaces as HTTP 502
+    """
     if _client is None:
         raise RuntimeError("Razorpay not configured — set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET")
 
@@ -44,11 +54,17 @@ def create_order(plan: str, currency: str = "INR", billing: str = "monthly") -> 
         raise ValueError(f"Unknown plan: {plan}")
     if amount == 0:
         raise ValueError("Free plan does not require payment")
+    if amount < MIN_AMOUNT_PAISE:
+        raise ValueError(f"Amount {amount} paise is below Razorpay's minimum of {MIN_AMOUNT_PAISE}")
+
+    # Short, human-recognisable receipt id (Razorpay caps receipt at 40 chars).
+    receipt = f"replai_{plan}_{billing[:3]}_{secrets.token_hex(6)}"
 
     order = _client.order.create(
         {
             "amount": amount,
             "currency": currency,
+            "receipt": receipt,
             "payment_capture": 1,
             "notes": {"plan": plan, "billing": billing},
         }
@@ -57,6 +73,7 @@ def create_order(plan: str, currency: str = "INR", billing: str = "monthly") -> 
         "id": order["id"],
         "amount": order["amount"],
         "currency": order["currency"],
+        "receipt": order["receipt"],
         "key_id": settings.RAZORPAY_KEY_ID,
         "plan": plan,
         "billing": billing,
