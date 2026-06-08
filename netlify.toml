@@ -5,7 +5,8 @@
 [build]
   base    = "frontend"
   command = "npm install --legacy-peer-deps && npm run build"
-  publish = "frontend/.next"
+  # Path is RELATIVE to `base`, so this resolves to /opt/build/repo/frontend/.next
+  publish = ".next"
 
 [build.environment]
   NODE_VERSION  = "20"
